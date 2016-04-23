@@ -8,7 +8,7 @@ int main() {
 	Player temp;
 	Database data = Create();
 	
-	while(looping == 1) {
+	while(looping) {
 		fprintf_s(stdout, "\nA simple player database\n\n" 
 			"(1) Add a player\n" 
 			"(2) Show all players\n" 
@@ -30,7 +30,7 @@ int main() {
 				break;
 			case('3'):
 				fprintf(stdout, "Please input the name of the player...>");
-				fscanf_s(stdin, "%s", &temp_name, 30);
+				fscanf_s(stdin, " %s", &temp_name, 30);
 				fprintf(stdout, "Searching for %s...\n", temp_name);
 				num = Search(&data, temp_name);
 				if (num == -1) {
@@ -65,5 +65,6 @@ int main() {
 		}
 	}
 
+	Close(&data);
 	system("pause");
 }

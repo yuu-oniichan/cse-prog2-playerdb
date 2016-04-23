@@ -5,7 +5,9 @@
  */
 Database Create() {
 	Database newdb;
-	newdb.headcount = 0;
+	newdb.size = 0;
+	newdb.capacity = 0;
+	newdb.dataheap = NULL;
 	return newdb;
 }
 
@@ -17,15 +19,39 @@ Database Create() {
  *
  */
 int Add(Database* data, Player person) {
-
-	if (data != NULL) {
-		data->dataheap.push_back(person);
-		data->headcount++;
-		return 1;
-	} 
-	else {
+	// check for db validity
+	if (data == NULL) {
+		fprintf(stderr, "Add DB ptr invalid error.\n");
 		return 0;
+	} 
+
+	// if allocated already has space
+	if (data->capacity > data->size) {
+		data->dataheap[data->size + 1] = person;
 	}
+	// if need to create space
+	else if (data->capacity == data->size) {
+		Player *newdb = (Player *)malloc(sizeof(Player)*++(data->capacity));
+
+		// check for allocation success
+		if (newdb == NULL) {
+			fprintf(stderr, "Add Out of Memory Error.\n");
+			data->capacity--;
+			return 0;
+		}
+
+		if (data->size) {
+			for (int i = 0; i < data->size; i++) {
+				newdb[i] = data->dataheap[i];
+			}
+			free(data->dataheap);
+		}
+		newdb[data->size] = person;
+		data->dataheap = newdb;
+	}	// unreachable unless error: size > capacity	else {		fprintf(stderr, "Add DB Bounds Critical Error.\n");		return 0;	}
+
+	data->size++;
+	return 1;
 }
 
 /**
@@ -34,9 +60,9 @@ int Add(Database* data, Player person) {
  */
 void Output(const Database* data) {
 	
-	fprintf(stdout, "There are %d records:\n\n", data->headcount);
+	fprintf(stdout, "There are %d records:\n\n", data->size);
 
-	for (int i = 0; i < data->headcount; i++) {
+	for (int i = 0; i < data->size; i++) {
 		Output(data->dataheap[i]);
 	}
 
@@ -53,12 +79,12 @@ void Output(const Database* data) {
  *
  */
 int Search(const Database* db, const char* name) {
-	if (db->headcount == 0) {
+	if (db->size == 0) {
 		return -1;
 	}
 	int cmp;
 
-	for (int i = 0; i < db->headcount; i++) {
+	for (int i = 0; i < db->size; i++) {
 		cmp = strncmp(db->dataheap[i].name, name, 30);
 		if (cmp == 0) {
 			return i;
@@ -76,11 +102,26 @@ int Search(const Database* db, const char* name) {
  *
  */
 int Remove(Database *db, int ind) {
-	if (ind > db->headcount || ind < 0) {
+	if (ind > db->size || ind < 0) {
 		return 0;
 	}
 
-	db->dataheap.erase(db->dataheap.begin()+ind);
-	db->headcount--;
+	// chk if needs moving: skipped on size 1, and last element index
+	if (db->size > 1 && ind != db->size-1) {
+		for (int i = ind; i < db->size; i++) {
+			db->dataheap[i] = db->dataheap[i + 1];
+		}
+	}
+	db->size--;
 	return 1;
+}
+
+int Copy(Database *newdb, const Database *olddb) {
+	return 0;
+}
+
+void Close(Database *db) {
+	free(db->dataheap);
+	db->capacity = 0;
+	db->size = 0;
 }

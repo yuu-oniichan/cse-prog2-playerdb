@@ -2,24 +2,24 @@
 #define _DATABASE_H_
 
 #include "player.h"
-#include <vector>
-
-using namespace std;
 
 typedef struct {
 
 	// the number of Player objects stored
-	int headcount;
+	int size;
+	int capacity;
 
-	// an array of Player objects
-	vector<Player> dataheap;
+	// a pointer to an allocated memory location of Player objects
+	Player *dataheap;
 
 } Database;
 
 Database Create();
 int Add(Database*, Player);
 void Output(const Database*);
-int Search(const Database *db, const char *name);
-int Remove(Database *db, int ind);
+int Search(const Database*, const char*);
+int Remove(Database*, int ind);
+int Copy(Database*, const Database*);
+void Close(Database*);
 
 #endif
