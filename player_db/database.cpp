@@ -25,7 +25,7 @@ int Add(Database* data, Player person) {
 
 	// if allocated already has space
 	if (data->capacity > data->size) {
-		data->dataheap[data->size + 1] = person;
+		data->dataheap[data->size] = person;
 	}
 	// if need to create space
 	else if (data->capacity == data->size) {
