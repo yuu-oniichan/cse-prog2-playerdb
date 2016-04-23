@@ -1,4 +1,4 @@
-#include "database.h"
+﻿#include "database.h"
 
 /** 
  * initialize a database object
@@ -48,7 +48,12 @@ int Add(Database* data, Player person) {
 		}
 		newdb[data->size] = person;
 		data->dataheap = newdb;
-	}	// unreachable unless error: size > capacity	else {		fprintf(stderr, "Add DB Bounds Critical Error.\n");		return 0;	}
+	}
+	// unreachable unless error: size > capacity
+	else {
+		fprintf(stderr, "Add DB Bounds Critical Error.\n");
+		return 0;
+	}
 
 	data->size++;
 	return 1;
@@ -116,8 +121,50 @@ int Remove(Database *db, int ind) {
 	return 1;
 }
 
+/**
+* Make a copy of a Database.
+* Assumes validity of both database initializations.
+* 
+* @ returns 1 if successful
+* @ otherwise, it returns 0
+*
+*/
 int Copy(Database *newdb, const Database *olddb) {
-	return 0;
+	// check if pointers are valid
+	if (newdb == NULL || olddb == NULL) {
+		fprintf(stderr, "Copy Param Error.\n");
+		return 0;
+	}
+
+	// checks if space is sufficient
+	if (newdb->capacity < olddb->size) {
+		Player *newp = (Player *)malloc(sizeof(Player)*(olddb->size));
+
+		// check for allocation success
+		if (newp == NULL) {
+			fprintf(stderr, "Copy Out of Memory Error.\n");
+			return 0;
+		}
+		
+		// check if need to free old memory
+		if (newdb->capacity > 0) {
+			free(newdb->dataheap);
+		}
+
+		// assigns memory, updates capacity
+		newdb->dataheap = newp;
+		newdb->capacity = olddb->size;
+	}
+	
+	// if olddb is not empty, fill newdb
+	if (olddb->size > 0) {
+		for (int i = 0; i < olddb->size; i++) {
+			newdb->dataheap[i] = olddb->dataheap[i];
+		}
+	}
+
+	newdb->size = olddb->size;
+	return 1;
 }
 
 void Close(Database *db) {
