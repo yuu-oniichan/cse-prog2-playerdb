@@ -3,12 +3,10 @@
 /** 
  * initialize a database object
  */
-Database Create() {
-	Database newdb;
-	newdb.size = 0;
-	newdb.capacity = 0;
-	newdb.dataheap = NULL;
-	return newdb;
+void Create(Database *newdb) {
+	newdb->size = 0;
+	newdb->capacity = 0;
+	newdb->dataheap = NULL;
 }
 
 /** 

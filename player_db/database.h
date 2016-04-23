@@ -14,7 +14,7 @@ typedef struct {
 
 } Database;
 
-Database Create();
+void Create(Database*);
 int Add(Database*, Player);
 void Output(const Database*);
 int Search(const Database*, const char*);

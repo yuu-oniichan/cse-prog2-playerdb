@@ -6,7 +6,8 @@ int main() {
 	int looping = 1;
 	int num = 0;
 	Player temp;
-	Database data = Create();
+	Database data;
+	Create(&data);
 	
 	while(looping) {
 		fprintf_s(stdout, "\nA simple player database\n\n" 
